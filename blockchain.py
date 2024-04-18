@@ -70,8 +70,9 @@ class Blockchain:
 
     def mine(self):
         # Give yourself a reward at the beginning of the transactions
-        self.create_transaction()
+        self.create_transaction("Server", self.address, self.mining_reward)
         # Find the right value for proof
+        
         # Add the block to the chain
         # Clear your current transactions
         pass
