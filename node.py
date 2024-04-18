@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from blockchain import Blockchain
 import dataclasses
 
+
 app = Flask(__name__)
 # Give yourself an address
 address = ""
@@ -49,4 +50,6 @@ def new_transaction():
 
 
 if __name__ == "__main__":
+    print("hello world")
     app.run()
+    
