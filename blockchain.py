@@ -2,6 +2,7 @@ import hashlib
 import time
 from dataclasses import dataclass
 import copy
+from dacite import from_dict
 
 @dataclass
 class Transaction:
@@ -25,6 +26,7 @@ class Blockchain:
         self.mining_reward = mining_reward
         self.chain = []
         self.current_transactions = []
+        self.players = set()
         
         # mannually added first block
         first_block = self.create_block(1, [], 0, "0")
@@ -56,7 +58,10 @@ class Blockchain:
     def add_block(self, block):
         if self.check_proof(block):
             self.chain.append(block)
-
+            
+    def add_player(self, address):
+        self.players.add(address)
+        
     def hash_block(self, block):
         return hashlib.sha256(str(block).encode()).hexdigest()
 
@@ -93,6 +98,19 @@ class Blockchain:
         # The chain is an array of blocks
         # You should check that the hashes chain together
         # The proofs of work should be valid
+        chain_len = len(self.chain)
+        if chain_len == 1:
+            return True
+        for i in range(1,chain_len):
+            block = self.chain[i]  
+            # check if previous hash is equal to the hash of i-1th block
+            previousHash = self.hash_block(self.chain[i-1])
+            if block.previous_hash != previousHash:
+                return False
+            # check if the current block's hash is correct
+            if not self.check_proof(block):
+                return False
+
         return True
 
     def receive_chain(self, chain_raw_json):

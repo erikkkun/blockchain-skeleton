@@ -3,6 +3,7 @@ from blockchain import Blockchain
 import dataclasses
 import requests
 import argparse
+# python3 ./node.py -i Node5000 -p 5000
 
 app = Flask(__name__)
 
@@ -101,7 +102,7 @@ def broadcast():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run a node in a blockchain network.")
     parser.add_argument("-i", "--identifier", default="")
-    parser.add_argument("port", default="5000")
+    parser.add_argument("-p", "--port", default="5000")
 
     args = parser.parse_args()
     identifier = args.identifier
