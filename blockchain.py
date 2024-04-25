@@ -26,6 +26,7 @@ class Blockchain:
         self.chain = []
         self.current_transactions = []
         
+        # mannually added first block
         first_block = self.create_block(1, [], 0, "0")
         while not self.check_proof(first_block):
             first_block.proof += 1
@@ -70,12 +71,21 @@ class Blockchain:
 
     def mine(self):
         # Give yourself a reward at the beginning of the transactions
-        self.create_transaction("Server", self.address, self.mining_reward)
+        reward = self.create_transaction("Server", self.address, self.mining_reward)
+        self.current_transactions.insert(0,reward)
         # Find the right value for proof
+        old_hash = self.hash_block(self.current_block)
         
+        proof_guess = 0
+        while True:   #increase the proof guess 1 at a time
+            test_block = self.create_block(self.next_index(), self.current_transactions, proof_guess, old_hash)
+            if self.check_proof(test_block):
+                break
+            proof_guess += 1
         # Add the block to the chain
+        self.add_block(test_block)
         # Clear your current transactions
-        pass
+        self.current_transactions = []
     
     
     
