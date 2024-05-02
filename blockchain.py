@@ -9,6 +9,7 @@ class Transaction:
     sender: str
     recipient: str
     amount: float
+    # signature: 
 
 
 @dataclass
@@ -121,18 +122,12 @@ class Blockchain:
         return False
     
     
-    
-# testing
-# address = ""
-# difficulty_number = 2
-# mining_reward = 10
-# local_blockchain = Blockchain(address, difficulty_number, mining_reward)
-# print(local_blockchain)
+print("hello world")
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
-# index = 0
-# trans = [Transaction("A", "B", 10), Transaction("B","C", 20)]
-# proof = 0
-# previous_hash = hashlib.sha256(str("haha").encode()).hexdigest()
-# local_blockchain.create_block(index, trans, proof, previous_hash)
-
-# print(local_blockchain.current_block)
+private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
+message = b"Gary sends Eric 10 dollars"  # Make sure to encode the message as bytes
+signature = private_key.sign(message, padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256())
+print(type(signature))

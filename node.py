@@ -53,6 +53,23 @@ def mine():
 def new_transaction():
     values = request.get_json()
     required = ["sender", "recipient", "amount"]
+    
+    # validate transaction by signature
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding, rsa
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
+    m = values["sender"] + " sends "+ values["recipient"] +" "+ str(values["amount"])+" dollars"
+    message = m.encode('utf-8')
+    # message = b"Gary sends Eric 10 dollars"  # Make sure to encode the message as bytes
+    signature = private_key.sign(message, padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256())
+    print(type(signature))
+    public_key = private_key.public_key()
+    if not public_key.verify(signature,message,padding.PSS(mgf=padding.MGF1(hashes.SHA256()),salt_length=padding.PSS.MAX_LENGTH),hashes.SHA256()):
+        exit(1)
+
+
+    
     if not values or not all(k in values for k in required):
         return "Missing values", 400
 
